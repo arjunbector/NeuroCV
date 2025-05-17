@@ -22,3 +22,30 @@ export const personalInfoSchema = z.object({
 })
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
+
+
+export const workExperienceSchema = z.object({
+    workExperiences: z.array(
+        z.object({
+            position: optionaString,
+            company: optionaString,
+            startDate: optionaString,
+            endDate: optionaString,
+            description: optionaString,
+        })
+    ).optional()
+})
+
+export type WorkExperienceValues = z.infer<typeof workExperienceSchema>;
+
+
+export const resumeSchema = z.object({
+    ...genereInfoSchema.shape,
+    ...personalInfoSchema.shape,
+    ...workExperienceSchema.shape,
+})
+
+export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
+    id?: string;
+    photo?: File | string | null;
+};

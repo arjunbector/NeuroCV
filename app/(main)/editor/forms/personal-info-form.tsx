@@ -12,30 +12,35 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
+import { EditorFormProps } from "@/lib/types";
+import { Button } from "@/components/ui/button";
 
-export default function PersonalInfoForm() {
+export default function PersonalInfoForm({
+  resumeData,
+  setResumeData,
+}: EditorFormProps) {
   const form = useForm<PersonalInfoValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
       photo: undefined,
-      firstName: "",
-      lastName: "",
-      jobTitle: "",
-      city: "",
-      country: "",
-      phone: "",
-      email: "",
+      firstName: resumeData.firstName || "",
+      lastName: resumeData.lastName || "",
+      jobTitle: resumeData.jobTitle || "",
+      city: resumeData.city || "",
+      country: resumeData.country || "",
+      phone: resumeData.phone || "",
+      email: resumeData.email || "",
     },
   });
 
-  // useEffect(() => {
-  //   const { unsubscribe } = form.watch(async () => {
-  //     const isValid = await form.trigger();
-  //     if (!isValid) return;
-  //     // update resume data
-  //   });
-  //   return unsubscribe;
-  // }, [form]);
+  useEffect(() => {
+    const { isValid } = form.formState;
+    const values = form.getValues();
+
+    if (isValid) {
+      setResumeData({ ...resumeData, ...values });
+    }
+  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -162,6 +167,19 @@ export default function PersonalInfoForm() {
                 </FormItem>
               )}
             />
+            <div className="flex justify-end">
+              <Button
+                className="cursor-pointer"
+                type="reset"
+                onClick={() => {
+                  form.reset();
+                }}
+                variant="ghost"
+                title="This will only reset this page"
+              >
+                Reset
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
