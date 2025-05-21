@@ -34,13 +34,17 @@ export default function PersonalInfoForm({
   });
 
   useEffect(() => {
-    const { isValid } = form.formState;
-    const values = form.getValues();
+    const subscription = form.watch((values) => {
+      if (form.formState.isValid) {
+        setResumeData({
+          ...resumeData,
+          ...values,
+        });
+      }
+    });
 
-    if (isValid) {
-      setResumeData({ ...resumeData, ...values });
-    }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
+    return () => subscription.unsubscribe();
+  }, [form, resumeData, setResumeData]);
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -52,9 +56,7 @@ export default function PersonalInfoForm({
             <FormField
               control={form.control}
               name="photo"
-              render={(
-                { field: { value, ...fieldValue } }, //2:14
-              ) => (
+              render={({ field: { value, ...fieldValue } }) => (
                 <FormItem>
                   <FormLabel>Project Name</FormLabel>
                   <FormControl>
@@ -63,7 +65,9 @@ export default function PersonalInfoForm({
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
-                        const file = e.target.files ? [0] : undefined;
+                        const file = e.target.files
+                          ? e.target.files[0]
+                          : undefined;
                         fieldValue.onChange(file);
                       }}
                     />

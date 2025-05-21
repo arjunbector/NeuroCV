@@ -1,5 +1,5 @@
 import {
-    Form,
+  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -25,15 +25,18 @@ export default function SummaryForm({
     },
     mode: "onChange",
   });
-
   useEffect(() => {
-    const { isValid } = form.formState;
-    const values = form.getValues();
+    const subscription = form.watch((values) => {
+      if (form.formState.isValid) {
+        setResumeData({
+          ...resumeData,
+          ...values,
+        });
+      }
+    });
 
-    if (isValid) {
-      setResumeData({ ...resumeData, ...values });
-    }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
+    return () => subscription.unsubscribe();
+  }, [form, resumeData, setResumeData]);
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">

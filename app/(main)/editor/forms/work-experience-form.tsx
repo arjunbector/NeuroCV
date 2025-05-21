@@ -27,19 +27,32 @@ export default function WorkExperienceForm({
       workExperiences: resumeData.workExperiences || [],
     },
   });
-
-  useEffect(() => {
+// Fixed useEffect for Work Experiences Form
+useEffect(() => {
+  // Create a subscription to watch form changes
+  const subscription = form.watch((values) => {
     const { isValid } = form.formState;
-    const values = form.getValues();
-
-    if (isValid) {
-      setResumeData({ ...resumeData, ...values });
+    
+    // Only update parent state when form is valid
+    if (isValid && values) {
+      setResumeData({
+        ...resumeData,
+        ...values,
+        workExperiences: values.workExperiences?.filter(
+          (experience): experience is NonNullable<typeof experience> => experience !== undefined
+        ),
+      });
     }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "workExperiences",
   });
+  
+  // Clean up subscription on unmount
+  return () => subscription.unsubscribe();
+}, [form, resumeData, setResumeData]);
+
+const { fields, append, remove } = useFieldArray({
+  control: form.control,
+  name: "workExperiences",
+});
 
   return (
     <div className="mx-auto max-w-xl space-y-6">

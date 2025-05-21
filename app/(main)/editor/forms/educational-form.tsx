@@ -29,15 +29,28 @@ export default function EducationalForm({
       educations: resumeData.educations || [],
     },
   });
-
+  // Fixed useEffect for Education Form
   useEffect(() => {
-    const { isValid } = form.formState;
-    const values = form.getValues();
+    // Create a subscription to watch form changes
+    const subscription = form.watch((values) => {
+      const { isValid } = form.formState;
 
-    if (isValid) {
-      setResumeData({ ...resumeData, ...values });
-    }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
+      // Only update parent state when form is valid
+      if (isValid && values) {
+        setResumeData({
+          ...resumeData,
+          ...values,
+          educations: values.educations?.filter(
+            (education): education is NonNullable<typeof education> => education !== undefined
+          ),
+        });
+      }
+    });
+
+    // Clean up subscription on unmount
+    return () => subscription.unsubscribe();
+  }, [form, resumeData, setResumeData]);
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "educations",

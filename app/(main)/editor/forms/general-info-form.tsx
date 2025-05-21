@@ -29,13 +29,17 @@ export default function GeneralInfoForm({
   });
 
   useEffect(() => {
-    const { isValid } = form.formState;
-    const values = form.getValues();
-
-    if (isValid) {
-      setResumeData({ ...resumeData, ...values });
-    }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
+    const subscription = form.watch((values) => {
+      if (form.formState.isValid) {
+        setResumeData({
+          ...resumeData,
+          ...values
+        });
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, resumeData, setResumeData]);
 
   return (
     <div className="mx-auto max-w-xl space-y-6">

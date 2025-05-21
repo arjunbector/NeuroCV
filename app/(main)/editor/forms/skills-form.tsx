@@ -25,18 +25,24 @@ export default function SkillsForm({
     },
     mode: "onChange",
   });
-
-  useEffect(() => {
+// Fixed useEffect for skills form
+useEffect(() => {
+  // Create a subscription to watch form changes
+  const subscription = form.watch((values) => {
     const { isValid } = form.formState;
-    const values = form.getValues();
-
-    if (isValid) {
+    
+    // Only update parent state when form is valid
+    if (isValid && values.skills) {
       setResumeData({
         ...resumeData,
-        skills: values.skills?.filter((skill) => skill.trim() != ""),
+        skills: values.skills.filter((skill): skill is string => skill?.trim() !== ""),
       });
     }
-  }, [form.formState.isValid, form.watch(), resumeData, setResumeData]);
+  });
+  
+  // Clean up subscription on unmount
+  return () => subscription.unsubscribe();
+}, [form, resumeData, setResumeData]);
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
