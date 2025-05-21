@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validations";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { formatDate } from "date-fns";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -29,6 +30,8 @@ export default function ResumePreview({
         }}
       >
         <PersonalInfoHeader resumeData={resumeData} />
+        <SummarySection resumeData={resumeData} />
+        <WorkExxperienceSection resumeData={resumeData} />
       </div>
     </div>
   );
@@ -39,7 +42,7 @@ interface ResumeSectionProps {
 }
 
 function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
-  console.log(resumeData)
+  console.log(resumeData);
   const { photo, firstName, lastName, jobTitle, city, country, phone, email } =
     resumeData;
 
@@ -74,11 +77,56 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
             {city}
             {city && country ? ", " : ""}
             {country}
-            {(city || country) &&  (phone || email) ? " • " : ""}
+            {(city || country) && (phone || email) ? " • " : ""}
             {[phone, email].filter(Boolean).join(" • ")}
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+function SummarySection({ resumeData }: ResumeSectionProps) {
+  const { summary } = resumeData;
+  if (!summary) return null;
+  return (
+    <>
+      <hr className="border-2" />
+      <div className="break-inside-avoid space-y-3">
+        <p className="text-lg font-semibold">Professional Summary</p>
+        <div className="text-sm whitespace-pre-line">{summary}</div>
+      </div>
+    </>
+  );
+}
+
+function WorkExxperienceSection({ resumeData }: ResumePreviewProps) {
+  const { workExperiences } = resumeData;
+  const workExperiencesNotEmpty = workExperiences?.filter(
+    (exp) => Object.values(exp).filter(Boolean).length > 0,
+  );
+  if (!workExperiencesNotEmpty?.length) return null;
+  return (
+    <>
+      <hr className="border-2" />
+      <div className="space-y-3">
+        <p className="text-lg font-semibold">Work Experience</p>
+        {workExperiencesNotEmpty.map((exp, idx) => (
+          <div key={idx} className="break-after-avoid space-y-1">
+            <div className="flex items-center justify-between text-sm font-semibold">
+              <span>{exp.position}</span>
+              {exp.startDate && (
+                <span>
+                  {formatDate(exp.startDate, "MM/yyyy")} -{" "}
+                  {exp.endDate ? formatDate(exp.endDate, "MM/yyyy") : "Present"}
+                </span>
+              )}
+            </div>
+            <p className="text-xs font-semibold">{exp.company}</p>
+            <div className="text-xs whitespace-pre-line">{exp.description}</div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
