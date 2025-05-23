@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -41,7 +42,8 @@ export default function EducationalForm({
           ...resumeData,
           ...values,
           educations: values.educations?.filter(
-            (education): education is NonNullable<typeof education> => education !== undefined
+            (education): education is NonNullable<typeof education> =>
+              education !== undefined,
           ),
         });
       }
@@ -145,20 +147,10 @@ function EducationItem({ form, index, remove }: EducationItemProps) {
               <Input {...field} />
             </FormControl>
             <FormMessage />
+            <FormDescription>For example: 8.50/9.00 CGPA</FormDescription>
           </FormItem>
         )}
       />
-      <div className="flex justify-end">
-        <Button
-          variant="destructive"
-          type="button"
-          onClick={() => {
-            remove(index);
-          }}
-        >
-          Remove
-        </Button>
-      </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField
           control={form.control}
@@ -194,6 +186,17 @@ function EducationItem({ form, index, remove }: EducationItemProps) {
             </FormItem>
           )}
         />
+      </div>
+      <div className="flex justify-end">
+        <Button
+          variant="destructive"
+          type="button"
+          onClick={() => {
+            remove(index);
+          }}
+        >
+          Remove
+        </Button>
       </div>
     </div>
   );
