@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { formatDate } from "date-fns";
 import { Badge } from "./ui/badge";
+import { BORDER_STYLES } from "@/app/(main)/editor/border-style-button";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -68,7 +69,6 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
     return () => URL.revokeObjectURL(objectUrl);
   }, [photo]);
 
-  console.log("photoSrc", photoSrc);
   return (
     <div className="flex items-center gap-6">
       {photoSrc && (
@@ -78,6 +78,14 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
           height={100}
           width={100}
           className="aspect-square object-cover"
+          style={{
+            borderRadius:
+              borderStyle === BORDER_STYLES.SQUARE
+                ? "0px"
+                : borderStyle === BORDER_STYLES.CIRCLE
+                  ? "9999px"
+                  : "10%",
+          }}
         />
       )}
       <div className="space-y-2.5">
@@ -235,7 +243,7 @@ function EducationSection({ resumeData }: ResumePreviewProps) {
 }
 
 function SkillsSection({ resumeData }: ResumePreviewProps) {
-  const { skills, colorHex } = resumeData;
+  const { skills, colorHex, borderStyle } = resumeData;
   if (!skills?.length) return null;
   return (
     <>
@@ -252,6 +260,13 @@ function SkillsSection({ resumeData }: ResumePreviewProps) {
             <Badge
               style={{
                 backgroundColor: colorHex,
+
+                borderRadius:
+                  borderStyle === BORDER_STYLES.SQUARE
+                    ? "0px"
+                    : borderStyle === BORDER_STYLES.CIRCLE
+                      ? "9999px"
+                      : "8px",
               }}
               key={idx}
               className="rounded-md bg-black text-white"
