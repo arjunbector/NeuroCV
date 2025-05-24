@@ -16,7 +16,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontalIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
 export default function WorkExperienceForm({
   resumeData,
   setResumeData,
@@ -27,32 +45,50 @@ export default function WorkExperienceForm({
       workExperiences: resumeData.workExperiences || [],
     },
   });
-// Fixed useEffect for Work Experiences Form
-useEffect(() => {
-  // Create a subscription to watch form changes
-  const subscription = form.watch((values) => {
-    const { isValid } = form.formState;
-    
-    // Only update parent state when form is valid
-    if (isValid && values) {
-      setResumeData({
-        ...resumeData,
-        ...values,
-        workExperiences: values.workExperiences?.filter(
-          (experience): experience is NonNullable<typeof experience> => experience !== undefined
-        ),
-      });
-    }
-  });
-  
-  // Clean up subscription on unmount
-  return () => subscription.unsubscribe();
-}, [form, resumeData, setResumeData]);
+  // Fixed useEffect for Work Experiences Form
+  useEffect(() => {
+    // Create a subscription to watch form changes
+    const subscription = form.watch((values) => {
+      const { isValid } = form.formState;
 
-const { fields, append, remove } = useFieldArray({
-  control: form.control,
-  name: "workExperiences",
-});
+      // Only update parent state when form is valid
+      if (isValid && values) {
+        setResumeData({
+          ...resumeData,
+          ...values,
+          workExperiences: values.workExperiences?.filter(
+            (experience): experience is NonNullable<typeof experience> =>
+              experience !== undefined,
+          ),
+        });
+      }
+    });
+
+    // Clean up subscription on unmount
+    return () => subscription.unsubscribe();
+  }, [form, resumeData, setResumeData]);
+
+  const { fields, append, remove, move } = useFieldArray({
+    control: form.control,
+    name: "workExperiences",
+  });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id != over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+      move(oldIndex, newIndex);
+      return arrayMove(fields, oldIndex, newIndex);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -64,14 +100,27 @@ const { fields, append, remove } = useFieldArray({
       </div>
       <Form {...form}>
         <form className="space-y-3">
-          {fields.map((field, idx) => (
-            <WorkExperienceItem
-              key={field.id}
-              form={form}
-              index={idx}
-              remove={remove}
-            />
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis]}
+          >
+            <SortableContext
+              items={fields}
+              strategy={verticalListSortingStrategy}
+            >
+              {fields.map((field, idx) => (
+                <WorkExperienceItem
+                  id={field.id}
+                  key={field.id}
+                  form={form}
+                  index={idx}
+                  remove={remove}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
           <div className="flex justify-center">
             <Button
               type="button"
@@ -97,14 +146,39 @@ const { fields, append, remove } = useFieldArray({
 interface WorkExperienceItemProps {
   form: UseFormReturn<WorkExperienceValues>;
   index: number;
+  id: string;
   remove: (index: number) => void;
 }
-function WorkExperienceItem({ form, index, remove }: WorkExperienceItemProps) {
+function WorkExperienceItem({
+  form,
+  index,
+  remove,
+  id,
+}: WorkExperienceItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
   return (
-    <div className="bg-background space-y-3 rounded-md border p-3">
+    <div
+      className={cn(
+        "bg-background space-y-3 rounded-md border p-3",
+        isDragging && "relative z-100 cursor-grab shadow-xl",
+      )}
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+    >
       <div className="flex justify-between gap-2">
         <span className="font-semibold">Work Experience {index + 1}</span>
-        <GripHorizontalIcon className="text-muted-foreground size-5 cursor-grab" />
+        <GripHorizontalIcon
+          className="text-muted-foreground size-5 cursor-grab focus:outline-none"
+          {...attributes}
+          {...listeners}
+        />
       </div>
       <FormField
         control={form.control}
