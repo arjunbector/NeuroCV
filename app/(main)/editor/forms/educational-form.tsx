@@ -171,7 +171,7 @@ function EducationItem({ form, index, remove, id }: EducationItemProps) {
         isDragging && "relative z-100 cursor-grab shadow-xl",
       )}
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}l
+      style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       <div className="flex justify-between gap-2">
         <span className="font-semibold">Work Experience {index + 1}</span>
