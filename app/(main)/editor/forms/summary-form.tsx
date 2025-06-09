@@ -67,6 +67,10 @@ export default function SummaryForm({
                   resumeData={resumeData}
                   onSummaryGenerated={(summary) => {
                     form.setValue("summary", summary);
+                    setResumeData({
+                      ...resumeData,
+                      summary,
+                    });
                   }}
                 />
               </FormItem>

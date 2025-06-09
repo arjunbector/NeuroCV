@@ -70,7 +70,7 @@ export async function saveResume(value: ResumeValues) {
                 },
                 educations: {
                     deleteMany: {}, // delete all existing work experiences
-                    create: workExperiences?.map(edu => ({
+                    create: educations?.map(edu => ({
                         ...edu,
                         startDate: edu.startDate ? new Date(edu.startDate) : null,
                         endDate: edu.endDate ? new Date(edu.endDate) : null
