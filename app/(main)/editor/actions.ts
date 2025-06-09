@@ -40,7 +40,8 @@ export async function saveResume(value: ResumeValues) {
         }
 
         const blob = await put(`resume_photos/${path.extname, (photo.name)}`, photo, {
-            access: "public"
+            access: "public",
+            addRandomSuffix:true
         })
 
         newPhotoUrl = blob.url;
@@ -67,7 +68,7 @@ export async function saveResume(value: ResumeValues) {
                         endDate: exp.endDate ? new Date(exp.endDate) : null
                     }))
                 },
-                education: {
+                educations: {
                     deleteMany: {}, // delete all existing work experiences
                     create: workExperiences?.map(edu => ({
                         ...edu,
@@ -92,7 +93,7 @@ export async function saveResume(value: ResumeValues) {
                             endDate: exp.endDate ? new Date(exp.endDate) : null
                         }))
                     },
-                    education: {
+                    educations: {
                         create: workExperiences?.map(edu => ({
                             ...edu,
                             startDate: edu.startDate ? new Date(edu.startDate) : null,
