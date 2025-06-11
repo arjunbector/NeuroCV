@@ -27,6 +27,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { generateWorkExperience } from "./actions";
+import { useSubscriptionLevel } from "../../subscription-level-provider";
+import usePremiumModal from "@/hooks/usePremiumModal";
+import { canUseAITools } from "@/lib/permissions";
 
 interface GenerateWorkExperienceButtonProps {
   onWorkExperienceGenerated: (workExperience: WorkExperience) => void;
@@ -34,13 +37,21 @@ interface GenerateWorkExperienceButtonProps {
 export default function GenerateWorkExperienceButton({
   onWorkExperienceGenerated,
 }: GenerateWorkExperienceButtonProps) {
+  const subscriptionLevel = useSubscriptionLevel();
+  const { setOpen } = usePremiumModal();
   const [showInputDialog, setShowInputDialog] = useState(false);
   return (
     <>
       <Button
         variant="outline"
         type="button"
-        onClick={() => setShowInputDialog(true)}
+        onClick={() => {
+          if (!canUseAITools(subscriptionLevel)) {
+            setOpen(true);
+            return;
+          }
+          setShowInputDialog(true);
+        }}
       >
         <WandSparklesIcon className="size-4" />
         Smart fill (AI)
@@ -48,9 +59,9 @@ export default function GenerateWorkExperienceButton({
       <InputDialog
         open={showInputDialog}
         onOpenChange={setShowInputDialog}
-        onWorkExperienceGenerated={(workExperience)=>{
-            onWorkExperienceGenerated(workExperience);
-            setShowInputDialog(false);
+        onWorkExperienceGenerated={(workExperience) => {
+          onWorkExperienceGenerated(workExperience);
+          setShowInputDialog(false);
         }}
       />
     </>

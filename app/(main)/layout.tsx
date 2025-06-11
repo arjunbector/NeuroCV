@@ -17,7 +17,7 @@ export default async function Layout({
   const userSubscriptionLevel = await getPlanDetails();
   return (
     <SubscriptionLevelProvider
-      userSubscriptionLevel={userSubscriptionLevel.plan}
+      userSubscriptionLevel={userSubscriptionLevel}
     >
       <div className="flex min-h-screen flex-col">
         <Navbar />

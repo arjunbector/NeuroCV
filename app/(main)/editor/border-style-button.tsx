@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { CircleIcon, SquareIcon, SquircleIcon } from "lucide-react";
+import { useSubscriptionLevel } from "../subscription-level-provider";
+import usePremiumModal from "@/hooks/usePremiumModal";
+import { canUseCustomization } from "@/lib/permissions";
 
 export const BORDER_STYLES = {
   SQUARE: "square",
@@ -17,7 +20,13 @@ export default function BorderStyleButton({
   borderStyle,
   onChange,
 }: BorderStyleButtonProps) {
+  const subscriptionLevel = useSubscriptionLevel();
+  const premiumModal = usePremiumModal();
   const handleClick = () => {
+    if (!canUseCustomization(subscriptionLevel)) {
+      premiumModal.setOpen(true);
+      return;
+    }
     const currentIdx = borderStyle ? borderStyles.indexOf(borderStyle) : 0;
     const nextIdx = (currentIdx + 1) % borderStyles.length;
     onChange(borderStyles[nextIdx]);
@@ -37,7 +46,7 @@ export default function BorderStyleButton({
       title="Change border style"
       onClick={handleClick}
     >
-      <Icon className="size-5"/>
+      <Icon className="size-5" />
     </Button>
   );
 }

@@ -1,9 +1,20 @@
 "use server";
 
 import { gemini } from "@/lib/gemini";
+import { canUseAITools } from "@/lib/permissions";
+import { getPlanDetails } from "@/lib/subscription";
 import { GenerateSummaryInput, generateSummarySchema, GenerateWorkExperienceInput, generateWorkExperienceSchema, WorkExperience } from "@/lib/validations";
+import { auth } from "@clerk/nextjs/server";
 
 export async function generateSummary(input: GenerateSummaryInput) {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+    const subscriptionLevel = await getPlanDetails();
+    if (!canUseAITools(subscriptionLevel)) {
+        throw new Error("You need a premium subscription to use AI tools.");
+    }
     const { educations, jobTitle, skills, workExperiences } = generateSummarySchema.parse(input);
 
     const systemMessage = `
@@ -50,6 +61,14 @@ Skills: ${skills}
 export async function generateWorkExperience(
     input: GenerateWorkExperienceInput
 ) {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+    const subscriptionLevel = await getPlanDetails();
+    if (!canUseAITools(subscriptionLevel)) {
+        throw new Error("You need a premium subscription to use AI tools.");
+    }
     const { description } = generateWorkExperienceSchema.parse(input);
     const systemMessage = `
     You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input. Your response must adhere to the following format. You can omit fields if they can't be inferred from the provided data, but don't add any new fields.

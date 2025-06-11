@@ -2,15 +2,15 @@ import { cache } from "react";
 import prisma from "./prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export const getPlanDetails = cache(async (): Promise<{ plan: "FREE" | "PREMIUM" | "PREMIUM_PLUS" }> => {
+export const getPlanDetails = cache(async (): Promise<"FREE" | "PREMIUM" | "PREMIUM_PLUS"> => {
     const { userId } = await auth();
     if (!userId) {
-        return { plan: "FREE" }
+        return "FREE"
     }
     const plan = await prisma.userSubscription.findFirst({
         where: { userId }
     });
-    return { plan: plan?.plan ?? "FREE" };
+    return plan?.plan ?? "FREE";
 });
 
 export const SUBSCRIPTION_AMOUNT: {

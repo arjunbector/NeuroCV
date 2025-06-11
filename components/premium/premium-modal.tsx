@@ -31,7 +31,7 @@ export default function PremiumModal() {
           res.razorpay_payment_id,
           res.razorpay_signature,
         );
-        if (!success) {
+        if (success) {
           toast.success("Subscription activated successfully!");
           window.location.reload();
         }
