@@ -14,3 +14,6 @@ export const resumeDataInclude: Prisma.ResumeInclude = {
 export type ResumeServerData = Prisma.ResumeGetPayload<{
     include: typeof resumeDataInclude;
 }>
+
+export type SubscriptionType = "FREE" | "PREMIUM" | "PREMIUM_PLUS";
+export type SubscriptionAmount = 0 | 500 | 1000;

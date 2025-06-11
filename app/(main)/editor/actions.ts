@@ -9,7 +9,6 @@ import path from "path";
 export async function saveResume(value: ResumeValues) {
     // for photo -> null = image deleted, undefined = no change, File = image
     const { id } = value;
-    console.log("Resume Data == ", value);
 
     const { photo, workExperiences, educations, ...resumeValues } = resumeSchema.parse(value);
 

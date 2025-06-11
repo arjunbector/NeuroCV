@@ -77,3 +77,41 @@ model Education {
 
   @@map("educations")
 }
+
+model UserSubscription {
+  id        String   @id @default(cuid())
+  userId    String   @unique() @map("user_id")
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orderId   String?  @unique() @map("order_id")
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("user_subscriptions")
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+  PREMIUM_PLUS
+}
+
+model Order {
+  id               String            @id @default(cuid())
+  razorPayOrderId  String            @unique() @map("razorpay_order_id")
+  userId           String            @map("user_id")
+  amount           Int               @default(0)
+  plan             Plan              @default(FREE)
+  status           String            @default("pending")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  userSubscription UserSubscription?
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
