@@ -6,6 +6,7 @@ import CreateResumeButton from "./create-resume-button";
 import ResumeItem from "./resume-item";
 import { getPlanDetails } from "@/lib/subscription";
 import { canCreateResume } from "@/lib/permissions";
+import { StickyNoteIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "My Resumes",
@@ -44,11 +45,18 @@ export default async function ResumePage() {
         <h1 className="text-3xl font-bold">Your Resumes</h1>
         <p>Total: {count}</p>
       </div>
-      <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
-        {resumes.map((resume) => (
-          <ResumeItem key={resume.id} resume={resume} />
-        ))}
-      </div>
+      {resumes.length > 0 ? (
+        <div className="flex w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4">
+          {resumes.map((resume) => (
+            <ResumeItem key={resume.id} resume={resume} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center space-y-3 rounded-lg border border-dashed p-6 text-center">
+          <StickyNoteIcon />
+          <p>No Resumes found</p>
+        </div>
+      )}
     </main>
   );
 }
