@@ -10,24 +10,24 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next/core-web-vitals"),
 
-  {
-    rules: {
-      // Turn off all TypeScript-specific rules
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-inferrable-types": "off",
-      "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/no-unused-expressions": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-this-alias": "off",
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-empty-object-type": "off",
-      // ...you can add more based on what warnings you're getting
-    },
-  },
+  // {
+  //   rules: {
+  //     // Turn off all TypeScript-specific rules
+  //     "@typescript-eslint/no-unused-vars": "off",
+  //     "@typescript-eslint/no-explicit-any": "off",
+  //     "@typescript-eslint/explicit-module-boundary-types": "off",
+  //     "@typescript-eslint/no-inferrable-types": "off",
+  //     "@typescript-eslint/no-empty-function": "off",
+  //     "@typescript-eslint/no-unused-expressions": "off",
+  //     "@typescript-eslint/ban-ts-comment": "off",
+  //     "@typescript-eslint/no-this-alias": "off",
+  //     "@typescript-eslint/no-require-imports": "off",
+  //     "@typescript-eslint/no-empty-object-type": "off",
+  //     // ...you can add more based on what warnings you're getting
+  //   },
+  // },
 ];
 
 export default eslintConfig;
