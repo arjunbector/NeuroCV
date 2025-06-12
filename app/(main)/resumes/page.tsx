@@ -52,7 +52,7 @@ export default async function ResumePage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center space-y-3 rounded-lg border border-dashed p-6 text-center">
+        <div className="flex flex-col items-center justify-center space-y-3 rounded-lg border border-dashed border-gray-400 p-6 text-center dark:border-gray-700">
           <StickyNoteIcon />
           <p>No Resumes found</p>
         </div>
