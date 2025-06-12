@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingButton from "@/components/loading-button";
 import ResumePreview from "@/components/resume-preview";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,18 +21,15 @@ import { ResumeServerData } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import {
-    Download,
+  Download,
   MoreVerticalIcon,
-  PrinterIcon,
-  SaveIcon,
-  Trash2Icon,
+  Trash2Icon
 } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
+import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
 import { deleteResume } from "./actions";
-import LoadingButton from "@/components/loading-button";
-import { useReactToPrint } from "react-to-print";
 
 interface ResumeItemProps {
   resume: ResumeServerData;

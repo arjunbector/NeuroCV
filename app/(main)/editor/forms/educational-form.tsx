@@ -12,14 +12,14 @@ import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import {
   educationSchema,
-  EducationValues,
-  WorkExperienceValues,
+  EducationValues
 } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontalIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 
+import { cn } from "@/lib/utils";
 import {
   closestCenter,
   DndContext,
@@ -29,6 +29,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
@@ -36,9 +37,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
-import { cn } from "@/lib/utils";
 
 export default function EducationalForm({
   resumeData,

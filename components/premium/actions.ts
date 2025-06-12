@@ -1,11 +1,11 @@
 "use server"
 
-import { auth } from "@clerk/nextjs/server";
-import Razorpay from "razorpay";
-import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { SUBSCRIPTION_AMOUNT } from "@/lib/subscription";
 import { SubscriptionAmount } from "@/lib/types";
+import { auth } from "@clerk/nextjs/server";
+import crypto from "crypto";
+import Razorpay from "razorpay";
 
 
 const key_id = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
@@ -102,7 +102,7 @@ export async function verifyOrder(orderId: string, razorpayPaymentId: string, ra
             throw new Error("Order not found in database");
         }
 
-        const subs = await prisma.userSubscription.create({
+        await prisma.userSubscription.create({
             data: {
                 userId: dbOrder.userId,
                 plan: dbOrder.plan,

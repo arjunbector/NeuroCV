@@ -1,12 +1,10 @@
 import PremiumModal from "@/components/premium/premium-modal";
-import Navbar from "./navbar";
-import { auth } from "@clerk/nextjs/server";
-import { useContext } from "react";
-import {
-  SubscriptionLevelProvider,
-  useSubscriptionLevel,
-} from "./subscription-level-provider";
 import { getPlanDetails } from "@/lib/subscription";
+import { auth } from "@clerk/nextjs/server";
+import Navbar from "./navbar";
+import {
+  SubscriptionLevelProvider
+} from "./subscription-level-provider";
 
 export default async function Layout({
   children,

@@ -5,13 +5,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckIcon } from "lucide-react";
-import { Button } from "../ui/button";
 import usePremiumModal from "@/hooks/usePremiumModal";
-import { createPremiumSubscription, verifyOrder } from "./actions";
-import Script from "next/script";
 import { SubscriptionAmount } from "@/lib/types";
+import { CheckIcon } from "lucide-react";
+import Script from "next/script";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { createPremiumSubscription, verifyOrder } from "./actions";
 
 const PREMIUM_FEATURES = ["AI Tools", "Upto 3 resumes"];
 const PREMIUM_PLUS_FEATURES = ["Infinite Resumes", "Design Customization"];
