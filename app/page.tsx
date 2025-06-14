@@ -1,10 +1,13 @@
 import Link from "next/link";
+import HeroSection from "./hero-section";
+import HowItWorks from "./how-it-works";
 
 
 export default function Home() {
   return (
-   <main>Resume builder
-    <Link className="block" href="editor">resume</Link>
+   <main className="dark:bg-neutral-900">
+    <HeroSection/>
+    <HowItWorks/>
    </main>
   );
 }

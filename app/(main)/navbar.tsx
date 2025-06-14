@@ -1,15 +1,17 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ui/theme-toggle";
+import logo from "@/public/globe.svg";
+import { useAuth, UserButton } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import { CreditCardIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/public/globe.svg";
-import { UserButton } from "@clerk/nextjs";
-import { CreditCardIcon } from "lucide-react";
-import ThemeToggle from "@/components/ui/theme-toggle";
-import {dark} from "@clerk/themes"
-import { useTheme } from "next-themes";
 
 export default function Navbar() {
-  const {theme} = useTheme();
+  const { theme } = useTheme();
+  const { userId } = useAuth();
   return (
     <header className="shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-3">
@@ -46,6 +48,11 @@ export default function Navbar() {
               />
             </UserButton.MenuItems>
           </UserButton>
+          {!userId && (
+            <Button asChild>
+              <Link href="/sign-in">Sign in</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>

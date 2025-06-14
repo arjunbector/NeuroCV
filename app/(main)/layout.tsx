@@ -18,7 +18,6 @@ export default async function Layout({
       userSubscriptionLevel={userSubscriptionLevel}
     >
       <div className="flex min-h-screen flex-col">
-        <Navbar />
         <PremiumModal />
         {children}
       </div>

@@ -64,6 +64,7 @@ export default function PremiumModal() {
                   ))}
                 </ul>
                 <Button
+                variant="secondary"
                   onClick={() => {
                     createOrder(500);
                   }}
@@ -85,7 +86,7 @@ export default function PremiumModal() {
                   ))}
                 </ul>
                 <Button
-                  variant="premium"
+                  variant="default"
                   onClick={() => {
                     createOrder(1000);
                   }}

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import Navbar from "./(main)/navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,6 +33,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Navbar />
+
             {children}
           </ThemeProvider>
           <Toaster />
