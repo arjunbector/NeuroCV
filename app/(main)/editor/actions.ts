@@ -94,6 +94,14 @@ export async function saveResume(value: ResumeValues) {
                         endDate: edu.endDate ? new Date(edu.endDate) : null
                     }))
                 },
+                projects: {
+                    deleteMany: {}, // delete all existing projects
+                    create: value.projects?.map(project => ({
+                        ...project,
+                        startDate: project.startDate ? new Date(project.startDate) : null,
+                        endDate: project.endDate ? new Date(project.endDate) : null
+                    }))
+                },
                 updatedAt: new Date()
             }
         })
@@ -118,6 +126,13 @@ export async function saveResume(value: ResumeValues) {
                             endDate: edu.endDate ? new Date(edu.endDate) : null
                         }))
                     },
+                    projects: {
+                        create: value.projects?.map(project => ({
+                            ...project,
+                            startDate: project.startDate ? new Date(project.startDate) : null,
+                            endDate: project.endDate ? new Date(project.endDate) : null
+                        }))
+                    }
                 }
             }
         )

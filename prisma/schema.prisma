@@ -4,8 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
-
 // prisma/schema.prisma
 datasource db {
   provider = "postgresql"
@@ -15,7 +13,6 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
 
 model Resume {
   id     String @id @default(cuid())
@@ -41,6 +38,7 @@ model Resume {
   updatedAt       DateTime         @updatedAt @map("updated_at")
   workExperiences WorkExperience[]
   educations      Education[]
+  projects         Project[]
 
   @@map("resumes")
 }
@@ -78,6 +76,21 @@ model Education {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("educations")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  title       String?
+  description String?
+  link        String?
+  startDate   DateTime? @map("start_date")
+  endDate     DateTime? @map("end_date")
+  resumeId    String    @map("resume_id")
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("projects")
 }
 
 model UserSubscription {

@@ -3,7 +3,7 @@
 import { gemini } from "@/lib/gemini";
 import { canUseAITools } from "@/lib/permissions";
 import { getPlanDetails } from "@/lib/subscription";
-import { GenerateSummaryInput, generateSummarySchema, GenerateWorkExperienceInput, generateWorkExperienceSchema, WorkExperience } from "@/lib/validations";
+import { GenerateProjectInfoInput, generateProjectInfoSchema, GenerateSummaryInput, generateSummarySchema, GenerateWorkExperienceInput, generateWorkExperienceSchema, Project, WorkExperience } from "@/lib/validations";
 import { auth } from "@clerk/nextjs/server";
 
 export async function generateSummary(input: GenerateSummaryInput) {
@@ -18,11 +18,19 @@ export async function generateSummary(input: GenerateSummaryInput) {
     const { educations, jobTitle, skills, workExperiences } = generateSummarySchema.parse(input);
 
     const systemMessage = `
-You are a professional resume summary generator AI. Your job is to craft a concise, compelling, and professional resume summary based on the user's background. Highlight key experiences, skills, and educational qualifications relevant to the job title. Do not include any explanations or additional commentary. Only return the summary. Tone should be confident, formal, and tailored to a professional audience.
+You are a resume summary generation assistant. Your goal is to generate a short, impactful professional summary paragraph that can be placed at the top of a resume.
+
+Instructions:
+- Focus on relevant accomplishments, experiences, and strengths aligned with the provided job title.
+- Avoid repeating detailed lists of tools, technologies, or job roles already covered in other sections.
+- Emphasize career highlights, value offered, and the candidate's unique positioning.
+- Keep the tone confident, clear, and professional.
+- Keep the summary under 80 words.
+- Output only the summary paragraph with no additional formatting, commentary, or instructions.
 `;
 
     const userMessage = `
-Generate a professional resume summary using the details below:
+Generate a resume summary using the information below:
 
 Job Title: ${jobTitle || "N/A"}
 
@@ -57,10 +65,7 @@ Skills: ${skills}
     return aiResponse;
 }
 
-
-export async function generateWorkExperience(
-    input: GenerateWorkExperienceInput
-) {
+export async function generateWorkExperience(input: GenerateWorkExperienceInput) {
     const { userId } = await auth();
     if (!userId) {
         throw new Error("User not authenticated");
@@ -71,18 +76,28 @@ export async function generateWorkExperience(
     }
     const { description } = generateWorkExperienceSchema.parse(input);
     const systemMessage = `
-    You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input. Your response must adhere to the following format. You can omit fields if they can't be inferred from the provided data, but don't add any new fields.
+You are a resume experience entry generator AI.
+Use the description provided by the user to return one formatted work experience entry.
 
-    Job title: <jobTitle>
-    Company: <companyName>
-    Start date: <format: YYYY-MM-DD> (only if provided)
-    End date: <format: YYYY-MM-DD> (only if provided)
-    Description: <an optimized description in bullet format('•' as bullet markers), might be inferred from the job title>
-    `
+Return the response using the following structure:
+
+Job title: <jobTitle>
+Company: <companyName>
+Start date: <YYYY-MM-DD> (if available)
+End date: <YYYY-MM-DD> (if available)
+Description:
+• Point 1
+• Point 2
+• Point 3
+
+Use professional bullet points that emphasize outcomes, responsibilities, or achievements inferred from the role. Do not add any commentary, explanation, or extra formatting.
+`;
+
     const userMessage = `
-    Please provide a work experience entry based on the following description:
-    ${description}
-    `
+Based on the following input, generate a work experience entry:
+${description}
+`;
+
     const response = await gemini.models.generateContent({
         model: "gemini-2.0-flash",
         contents: userMessage,
@@ -93,13 +108,10 @@ export async function generateWorkExperience(
     const aiResponse = response.text;
     if (!aiResponse) throw new Error("Failed to generate summary");
 
-
-    // Extract details using regex
     const position = aiResponse.match(/Job title:\s*(.*)/i)?.[1]?.trim() || "";
     const company = aiResponse.match(/Company:\s*(.*)/i)?.[1]?.trim() || "";
     const startDate = aiResponse.match(/Start date:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i)?.[1] || "";
     const endDate = aiResponse.match(/End date:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i)?.[1] || "";
-    // Description: everything after "Description:" (could be multiline)
     const descriptionMatch = aiResponse.match(/Description:\s*([\s\S]*)/i);
     const parsedDescription = descriptionMatch ? descriptionMatch[1].trim() : "";
 
@@ -110,4 +122,62 @@ export async function generateWorkExperience(
         startDate,
         endDate,
     } satisfies WorkExperience;
+}
+
+export async function generateProjectInfo(input: GenerateProjectInfoInput) {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+    const subscriptionLevel = await getPlanDetails();
+    if (!canUseAITools(subscriptionLevel)) {
+        throw new Error("You need a premium subscription to use AI tools.");
+    }
+    const { description } = generateProjectInfoSchema.parse(input);
+    const systemMessage = `
+You are a resume project entry generator AI. Create a project summary from the provided description.
+
+Return the output in this format:
+
+Project Title: <projectTitle>
+Project Link: <projectLink>
+Start date: <YYYY-MM-DD> (if provided)
+End date: <YYYY-MM-DD> (if provided)
+Description:
+• Point 1
+• Point 2
+• Point 3
+
+If date is not given, omit it. Do not fabricate fields or include commentary. Keep bullet points achievement-oriented and use clear, professional language.
+`;
+
+    const userMessage = `
+Based on the following input, generate a project entry:
+${description}
+`;
+
+    const response = await gemini.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: userMessage,
+        config: {
+            systemInstruction: systemMessage,
+        },
+    });
+    const aiResponse = response.text;
+    if (!aiResponse) throw new Error("Failed to generate summary");
+
+    const title = aiResponse.match(/Project Title:\s*(.*)/i)?.[1]?.trim() || "";
+    const link = aiResponse.match(/Project Link:\s*(.*)/i)?.[1]?.trim() || "";
+    const startDate = aiResponse.match(/Start date:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i)?.[1] || "";
+    const endDate = aiResponse.match(/End date:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})/i)?.[1] || "";
+    const descriptionMatch = aiResponse.match(/Description:\s*([\s\S]*)/i);
+    const parsedDescription = descriptionMatch ? descriptionMatch[1].trim() : "";
+
+    return {
+        title,
+        link,
+        description: parsedDescription,
+        startDate,
+        endDate,
+    } satisfies Project;
 }

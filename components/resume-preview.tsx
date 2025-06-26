@@ -38,6 +38,7 @@ export default function ResumePreview({
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
         <WorkExxperienceSection resumeData={resumeData} />
+        <ProjectsSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />
         <SkillsSection resumeData={resumeData} />
       </div>
@@ -238,6 +239,53 @@ function EducationSection({ resumeData }: ResumePreviewProps) {
               </div>
             </div>
             <p className="text-xs font-semibold">{edu.school}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function ProjectsSection({ resumeData }: ResumePreviewProps) {
+  const { projects, colorHex } = resumeData;
+  const projectsNotEmpty = projects?.filter(
+    (project) => Object.values(project).filter(Boolean).length > 0,
+  );
+  if (!projectsNotEmpty?.length) return null;
+  return (
+    <>
+      <hr
+        className="border-2"
+        style={{
+          borderColor: colorHex,
+        }}
+      />
+      <div className="space-y-3">
+        <p
+          className="text-lg font-semibold"
+          style={{
+            color: colorHex,
+          }}
+        >
+          Projects
+        </p>
+        {projectsNotEmpty.map((project, idx) => (
+          <div key={idx} className="break-after-avoid space-y-1">
+            <div className="flex items-center justify-between text-sm font-semibold">
+              <span>{project.title}</span>
+              {project.startDate && (
+                <span>
+                  {formatDate(project.startDate, "MMMM yyyy")}{" "}
+                  {project.endDate
+                    ? `- ${formatDate(project.endDate, "MMMM yyyy")}`
+                    : ""}
+                </span>
+              )}
+            </div>
+            <p className="text-xs font-semibold">{project.link}</p>
+            <div className="text-xs whitespace-pre-line">
+              {project.description}
+            </div>
           </div>
         ))}
       </div>

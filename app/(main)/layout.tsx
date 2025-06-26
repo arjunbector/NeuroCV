@@ -17,7 +17,7 @@ export default async function Layout({
     <SubscriptionLevelProvider
       userSubscriptionLevel={userSubscriptionLevel}
     >
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-[calc(100vh-59px)] flex-col">
         <PremiumModal />
         {children}
       </div>

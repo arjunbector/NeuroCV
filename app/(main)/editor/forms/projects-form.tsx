@@ -1,55 +1,55 @@
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { EditorFormProps } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import {
-  educationSchema,
-  EducationValues
+    projectsSchema,
+    ProjectsValues
 } from "@/lib/validations";
+import {
+    closestCenter,
+    DndContext,
+    DragEndEvent,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontalIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-
-import { cn } from "@/lib/utils";
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
-export default function EducationalForm({
+import GenerateWorkExperienceButton from "./generate-work-experience-button";
+import GenerateProjectInfoButton from "./generate-project-info-button";
+export default function ProjectsForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
-  const form = useForm<EducationValues>({
-    resolver: zodResolver(educationSchema),
+  const form = useForm<ProjectsValues>({
+    resolver: zodResolver(projectsSchema),
     defaultValues: {
-      educations: resumeData.educations || [],
+      projects: resumeData.projects || [],
     },
   });
-  // Fixed useEffect for Education Form
   useEffect(() => {
     // Create a subscription to watch form changes
     const subscription = form.watch((values) => {
@@ -60,9 +60,9 @@ export default function EducationalForm({
         setResumeData({
           ...resumeData,
           ...values,
-          educations: values.educations?.filter(
-            (education): education is NonNullable<typeof education> =>
-              education !== undefined,
+          projects: values.projects?.filter(
+            (project): project is NonNullable<typeof project> =>
+              project !== undefined,
           ),
         });
       }
@@ -74,7 +74,7 @@ export default function EducationalForm({
 
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
-    name: "educations",
+    name: "projects",
   });
 
   const sensors = useSensors(
@@ -97,10 +97,8 @@ export default function EducationalForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Education</h2>
-        <p className="text-muted-foreground text-sm">
-          Add your education details
-        </p>
+        <h2 className="text-2xl font-semibold">Projects</h2>
+        <p className="text-muted-foreground text-sm">Add your projects here.</p>
       </div>
       <Form {...form}>
         <form className="space-y-3">
@@ -115,7 +113,7 @@ export default function EducationalForm({
               strategy={verticalListSortingStrategy}
             >
               {fields.map((field, idx) => (
-                <EducationItem
+                <ProjectsItem
                   id={field.id}
                   key={field.id}
                   form={form}
@@ -130,15 +128,15 @@ export default function EducationalForm({
               type="button"
               onClick={() => {
                 append({
-                  degree: "",
-                  school: "",
+                  title: "",
+                  link: "",
                   startDate: "",
                   endDate: "",
-                  marks: "",
+                  description: "",
                 });
               }}
             >
-              Add education
+              Add Project
             </Button>
           </div>
         </form>
@@ -147,14 +145,13 @@ export default function EducationalForm({
   );
 }
 
-interface EducationItemProps {
-  form: UseFormReturn<EducationValues>;
+interface ProjectsItemProps {
+  form: UseFormReturn<ProjectsValues>;
   index: number;
-  remove: (index: number) => void;
   id: string;
+  remove: (index: number) => void;
 }
-
-function EducationItem({ form, index, remove, id }: EducationItemProps) {
+function ProjectsItem({ form, index, remove, id }: ProjectsItemProps) {
   const {
     attributes,
     listeners,
@@ -173,19 +170,26 @@ function EducationItem({ form, index, remove, id }: EducationItemProps) {
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       <div className="flex justify-between gap-2">
-        <span className="font-semibold">Education {index + 1}</span>
+        <span className="font-semibold">Project {index + 1}</span>
         <GripHorizontalIcon
           className="text-muted-foreground size-5 cursor-grab focus:outline-none"
           {...attributes}
           {...listeners}
         />
       </div>
+      <div className="flex justify-center">
+        <GenerateProjectInfoButton
+          onProjectGenerated={(project) =>
+            form.setValue(`projects.${index}`, project)
+          }
+        />
+      </div>
       <FormField
         control={form.control}
-        name={`educations.${index}.degree`}
+        name={`projects.${index}.title`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Degree</FormLabel>
+            <FormLabel>Project Title</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
             </FormControl>
@@ -195,35 +199,21 @@ function EducationItem({ form, index, remove, id }: EducationItemProps) {
       />
       <FormField
         control={form.control}
-        name={`educations.${index}.school`}
+        name={`projects.${index}.link`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>School</FormLabel>
+            <FormLabel>Project Link</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
             <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name={`educations.${index}.marks`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Marks or CGPA</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-            <FormDescription>For example: 8.50/9.00 CGPA</FormDescription>
           </FormItem>
         )}
       />
       <div className="grid grid-cols-2 gap-3">
         <FormField
           control={form.control}
-          name={`educations.${index}.startDate`}
+          name={`projects.${index}.startDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Start Date</FormLabel>
@@ -240,7 +230,7 @@ function EducationItem({ form, index, remove, id }: EducationItemProps) {
         />
         <FormField
           control={form.control}
-          name={`educations.${index}.endDate`}
+          name={`projects.${index}.endDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>End Date</FormLabel>
@@ -256,6 +246,23 @@ function EducationItem({ form, index, remove, id }: EducationItemProps) {
           )}
         />
       </div>
+      <FormDescription>
+        Leave <span className="font-semibold">end date</span> empty if you are
+        currently working here.
+      </FormDescription>
+      <FormField
+        control={form.control}
+        name={`projects.${index}.description`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Decription</FormLabel>
+            <FormControl>
+              <Textarea {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       <div className="flex justify-end">
         <Button
           variant="destructive"

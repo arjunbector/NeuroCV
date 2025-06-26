@@ -48,7 +48,7 @@ export default function PremiumModal() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Resume Builder AI Premium</DialogTitle>
+            <DialogTitle>NeuroCV AI Premium</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             <p>Get a premium subscription to unlock more features.</p>

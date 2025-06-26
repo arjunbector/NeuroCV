@@ -24,7 +24,7 @@ export default function Navbar() {
             className="rounded-full"
           />
           <span className="text-xl font-bold tracking-tight">
-            Resume Builder
+            NeuroCV
           </span>
         </Link>
         <div className="flex items-center gap-3">
