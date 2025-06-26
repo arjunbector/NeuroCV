@@ -1,4 +1,3 @@
-import Link from "next/link";
 import HeroSection from "./hero-section";
 import HowItWorks from "./how-it-works";
 

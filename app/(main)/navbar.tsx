@@ -4,7 +4,7 @@ import ThemeToggle from "@/components/ui/theme-toggle";
 import logo from "@/public/globe.svg";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import { CreditCardIcon } from "lucide-react";
+import { BrainCircuitIcon, CreditCardIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,13 +16,7 @@ export default function Navbar() {
     <header className="shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 p-3">
         <Link href="resumes" className="flex items-center gap-2">
-          <Image
-            src={logo}
-            alt="logo"
-            width={35}
-            height={35}
-            className="rounded-full"
-          />
+          <BrainCircuitIcon className="size-8"/>
           <span className="text-xl font-bold tracking-tight">
             NeuroCV
           </span>
