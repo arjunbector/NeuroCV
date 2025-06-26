@@ -2,7 +2,7 @@ import { cache } from "react";
 import prisma from "./prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export const getPlanDetails = cache(async (): Promise<"FREE" | "PREMIUM" | "PREMIUM_PLUS"> => {
+export const getPlanDetails = cache(async (): Promise<"FREE" | "PREMIUM"> => {
     const { userId } = await auth();
     if (!userId) {
         return "FREE"
@@ -14,9 +14,8 @@ export const getPlanDetails = cache(async (): Promise<"FREE" | "PREMIUM" | "PREM
 });
 
 export const SUBSCRIPTION_AMOUNT: {
-    [amount: number]: "PREMIUM" | "PREMIUM_PLUS" | "FREE"
+    [amount: number]: "PREMIUM" | "FREE"
 } = {
     0: "FREE",
     500: "PREMIUM",
-    1000: "PREMIUM_PLUS",
 }

@@ -108,7 +108,6 @@ model UserSubscription {
 enum Plan {
   FREE
   PREMIUM
-  PREMIUM_PLUS
 }
 
 model Order {

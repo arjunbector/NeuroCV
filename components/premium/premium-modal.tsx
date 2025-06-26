@@ -14,7 +14,6 @@ import { Button } from "../ui/button";
 import { createPremiumSubscription, verifyOrder } from "./actions";
 
 const PREMIUM_FEATURES = ["AI Tools", "Upto 3 resumes"];
-const PREMIUM_PLUS_FEATURES = ["Infinite Resumes", "Design Customization"];
 
 export default function PremiumModal() {
   const { open, setOpen } = usePremiumModal();
@@ -46,54 +45,31 @@ export default function PremiumModal() {
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>NeuroCV AI Premium</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             <p>Get a premium subscription to unlock more features.</p>
-            <div className="flex">
-              <div className="flex w-1/2 flex-col space-y-5">
-                <h3 className="text-center text-lg font-bold">Premium</h3>
-                <ul className="list-inside space-y-2">
-                  {PREMIUM_FEATURES.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <CheckIcon className="size-4 text-green-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                variant="secondary"
-                  onClick={() => {
-                    createOrder(500);
-                  }}
-                >
-                  Get Premium
-                </Button>
-              </div>
-              <div className="mx-6 border-l" />
-              <div className="flex w-1/2 flex-col space-y-5">
-                <h3 className="bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-center text-lg font-bold text-transparent">
-                  Premium+
-                </h3>
-                <ul className="list-inside space-y-2">
-                  {PREMIUM_PLUS_FEATURES.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <CheckIcon className="size-4 text-green-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    createOrder(1000);
-                  }}
-                >
-                  Get Premium+
-                </Button>
-              </div>
+            <div className="flex flex-col items-center space-y-5 border p-4 rounded-4xl">
+              <h3 className="text-center text-lg font-bold">Premium</h3>
+              <ul className="list-inside space-y-2">
+                {PREMIUM_FEATURES.map((feature) => (
+                  <li key={feature} className="flex items-center gap-2">
+                    <CheckIcon className="size-4 text-green-500" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => {
+                  createOrder(500);
+                }}
+              >
+                Get Premium
+              </Button>
             </div>
           </div>
         </DialogContent>
