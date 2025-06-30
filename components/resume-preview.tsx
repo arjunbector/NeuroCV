@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatDate } from "date-fns";
 import { Badge } from "./ui/badge";
 import { BORDER_STYLES } from "@/app/(main)/editor/border-style-button";
+import Link from "next/link";
 
 interface ResumePreviewProps {
   resumeData: ResumeValues;
@@ -272,7 +273,13 @@ function ProjectsSection({ resumeData }: ResumePreviewProps) {
         {projectsNotEmpty.map((project, idx) => (
           <div key={idx} className="break-after-avoid space-y-1">
             <div className="flex items-center justify-between text-sm font-semibold">
-              <span>{project.title}</span>
+              <span>
+                {project.link ? (
+                  <Link target="_blank" href={project.link}>{project.title}</Link>
+                ) : (
+                  project.title
+                )}
+              </span>
               {project.startDate && (
                 <span>
                   {formatDate(project.startDate, "MMMM yyyy")}{" "}
@@ -282,7 +289,6 @@ function ProjectsSection({ resumeData }: ResumePreviewProps) {
                 </span>
               )}
             </div>
-            <p className="text-xs font-semibold">{project.link}</p>
             <div className="text-xs whitespace-pre-line">
               {project.description}
             </div>
