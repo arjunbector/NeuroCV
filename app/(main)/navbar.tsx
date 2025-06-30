@@ -34,13 +34,13 @@ export default function Navbar() {
               },
             }}
           >
-            <UserButton.MenuItems>
+            {/* <UserButton.MenuItems>
               <UserButton.Link
                 href="/billing"
                 label="Billing"
                 labelIcon={<CreditCardIcon className="size-4" />}
               />
-            </UserButton.MenuItems>
+            </UserButton.MenuItems> */}
           </UserButton>
           {!userId && (
             <Button asChild>
