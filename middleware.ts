@@ -7,14 +7,6 @@ export default clerkMiddleware(async (auth, req) => {
     if (!isPublicRoute(req)) {
         await auth.protect();
     }
-    const { userId } = await auth();
-    if (userId) {
-        // User is logged in
-        if (req.nextUrl.pathname == "/") {
-            // Redirect to resumes page if user is logged in and on the home page
-            return Response.redirect(new URL("/resumes", req.url));
-        }
-    }
 });
 
 
