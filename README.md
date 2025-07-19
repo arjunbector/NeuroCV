@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NeuroCV: AI-Powered Resume Builder
+
+Build a job-winning resume in minutes, powered by AI. NeuroCV helps you craft professional, tailored resumes with ease—no writing stress, no rigid templates, just results.
+
+## Features
+
+- **AI-Powered Resume Generation**: Let advanced AI write your professional summary, work experience, and project descriptions.
+- **Step-by-Step Resume Editor**: Fill out sections for General Info, Personal Info, Work Experience, Education, Projects, Skills, and Summary.
+- **Smart Fill (AI)**: Instantly generate optimized content for work experience, projects, and summary with a single click (Premium feature).
+- **Live Resume Preview**: See your resume update in real time as you edit.
+- **Drag-and-Drop Sections**: Easily reorder work experience, education, and projects.
+- **Multiple Resumes**: Create and manage as many resumes as you like.
+- **Customizable Design**: Personalize colors, borders, and add a profile photo.
+- **Download or Print**: Export your resume as a PDF or print it directly from the app.
+- **User Authentication**: Secure sign-in and user management with Clerk.
+- **Responsive UI**: Beautiful, modern interface built with React, Next.js, and Tailwind CSS.
+
+## How It Works
+
+1. **Share Your Info**: Answer a few simple questions about your education, experience, and skills.
+2. **Let AI Work Its Magic**: NeuroCV's AI writes tailored summaries, experience descriptions, and achievements that match your goals.
+3. **Download or Print**: Get a polished, professional resume ready for job applications.
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, Tailwind CSS
+- **Backend**: Next.js API routes, Prisma ORM, PostgreSQL
+- **AI Integration**: Google Gemini API for content generation
+- **Authentication**: Clerk
+- **Payments**: Razorpay (for premium subscriptions)
+- **State Management**: Zustand, React Hook Form
+
+
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/arjunbector/NeuroCV
+   cd NeuroCV
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
+3. **Set up environment variables:**
+   - Copy `.env.example` to `.env` and fill in your database, Clerk, Gemini, and Razorpay credentials.
+4. **Run database migrations:**
+   ```bash
+   npx prisma migrate dev
+   ```
+5. **Start the development server:**
+   ```bash
+   npm run dev
+   # or
+   pnpm dev
+   ```
+6. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `app/` — Next.js app directory (routes, pages, API)
+- `components/` — Reusable UI components
+- `hooks/` — Custom React hooks
+- `lib/` — Utility functions and API integrations
+- `prisma/` — Prisma schema and migrations
+- `public/` — Static assets
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Models
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Resume**: title, description, photo, color, border, summary, personal info, skills, work experiences, education, projects
+- **WorkExperience**: position, company, dates, description
+- **Education**: degree, school, dates, marks
+- **Project**: title, description, link, dates
+- **UserSubscription**: plan (FREE, PREMIUM), order
+- **Order**: payment info, status
