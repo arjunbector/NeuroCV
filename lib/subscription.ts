@@ -7,10 +7,14 @@ export const getPlanDetails = cache(async (): Promise<"FREE" | "PREMIUM"> => {
     if (!userId) {
         return "FREE"
     }
-    const plan = await prisma.userSubscription.findFirst({
-        where: { userId }
-    });
-    return plan?.plan ?? "FREE";
+    try {
+        const plan = await prisma.userSubscription.findFirst({
+            where: { userId }
+        });
+        return plan?.plan ?? "FREE";
+    } catch (error) {
+        return "FREE";
+    }
 });
 
 export const SUBSCRIPTION_AMOUNT: {
